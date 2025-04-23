@@ -11,6 +11,7 @@ import ru.itmo.wp.service.JwtService;
 import ru.itmo.wp.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -18,14 +19,13 @@ public class JwtController {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final UserCredentialsEnterValidator enterValidator;
 
     public JwtController(UserService userService, JwtService jwtService, UserCredentialsEnterValidator enterValidator) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.enterValidator = enterValidator;
     }
-
-    private final UserCredentialsEnterValidator enterValidator;
 
     @InitBinder("userCredentials")
     public void initBinder(WebDataBinder webDataBinder){
@@ -38,12 +38,12 @@ public class JwtController {
         if (bindingResult.hasErrors()){
             throw new ValidationException(bindingResult);
         }
-        User user = userService.findByLoginAndPassword(userCredentials.getLogin(), userCredentials.getPassword());
-        return jwtService.create(user);
+        return userService.findByLoginAndPassword(userCredentials.login(), userCredentials.password())
+                .map(jwtService::create).orElse(null);
     }
 
     @GetMapping("/jwt")
-    public User find(@RequestParam String jwt){
+    public Optional<User> find(@RequestParam String jwt){
         return jwtService.find(jwt);
     }
 

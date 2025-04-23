@@ -21,7 +21,7 @@ public class UserCredentialsEnterValidator implements Validator {
     public void validate(Object target, Errors errors) {
         if (!errors.hasErrors()) {
             UserCredentials enterForm = (UserCredentials) target;
-            if (userService.findByLoginAndPassword(enterForm.getLogin(), enterForm.getPassword()) == null) {
+            if (userService.findByLoginAndPassword(enterForm.login(), enterForm.password()) == null) {
                 errors.rejectValue("password", "password.invalid-login-or-password", "invalid login or password");
             }
         }

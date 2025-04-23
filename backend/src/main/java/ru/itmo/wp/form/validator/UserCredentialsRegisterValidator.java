@@ -21,7 +21,7 @@ public class UserCredentialsRegisterValidator implements Validator {
     public void validate(Object target, Errors errors) {
         if (!errors.hasErrors()) {
             UserCredentials registerForm = (UserCredentials) target;
-            if (!userService.isLoginVacant(registerForm.getLogin())) {
+            if (!userService.isLoginVacant(registerForm.login())) {
                 errors.rejectValue("login", "login.is-in-use", "login is in use already");
             }
         }
